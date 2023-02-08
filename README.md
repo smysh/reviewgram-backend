@@ -33,9 +33,9 @@ This file also has a comment to define a Blueprint. Feel free to delete it.
 
 ## `app/models` Directory
 
-This project already includes `app/models/board.py` and `app/models/card.py`, to anticipate the models `Board` and `Card`.
+This project already includes `app/models/user.py`, to anticipate the model `User`.
 
-Both files already import `db`, for convenience!
+The model file already import `db`, for convenience!
 
 ## `requirements.txt`
 
