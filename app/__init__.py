@@ -22,14 +22,17 @@ def create_app(test_config=None):
             "SQLALCHEMY_DATABASE_URI_TEST")
 
     # Import models here for Alembic setup
-    # from app.models.ExampleModel import ExampleModel
-
+    from app.models.user import User
+    from app.models.review import Review
+    from app.models.watchlist import Watchlist
+    from app.models.media import Media
+    
     db.init_app(app)
     migrate.init_app(app, db)
 
     # Register Blueprints here
-    # from .routes import example_bp
-    # app.register_blueprint(example_bp)
+    from .routes import media_bp
+    app.register_blueprint(media_bp)
 
     CORS(app)
     return app
