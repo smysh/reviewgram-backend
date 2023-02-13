@@ -31,7 +31,7 @@ def create_app(test_config=None):
     migrate.init_app(app, db)
 
     # Register Blueprints here
-    from .routes import media_bp
+    from app.routes.media_routes import media_bp
     app.register_blueprint(media_bp)
 
     CORS(app)
