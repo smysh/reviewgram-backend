@@ -22,8 +22,10 @@ def create_app(test_config=None):
             "SQLALCHEMY_DATABASE_URI_TEST")
 
     # Import models here for Alembic setup
-    # from app.models.ExampleModel import ExampleModel
-
+    from app.models.user import User
+    from app.models.review import Review
+    from app.models.watchlist import Watchlist
+    
     db.init_app(app)
     migrate.init_app(app, db)
 
