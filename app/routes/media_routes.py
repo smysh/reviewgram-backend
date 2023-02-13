@@ -1,5 +1,6 @@
 from flask import Blueprint, request, jsonify, make_response
 from app import db 
+from app.routes.TMDB_API_calls import get_TMDB_tv_show
 
 media_bp = Blueprint('media_bp', __name__, url_prefix="/media")
 
@@ -26,6 +27,8 @@ def get_reviews_by_movie_id(movie_id):
 
 @media_bp.route("/tv/<tmdb_tv_id>", methods=["GET"])
 def get_tv_show_details_by_id(tmdb_tv_id):
+
+    tv_show = get_TMDB_tv_show(tmdb_tv_id)
 
     response_obj = {
         "statuscode": 200,
