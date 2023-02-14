@@ -8,7 +8,7 @@ class Watchlist(db.Model):
       user_id = db.Column(db.Integer, db.ForeignKey("user.id"))
       user = db.relationship("User", back_populates="watchlist")
       media_id = db.Column(db.Integer,db.ForeignKey("media.id"))
-      media = db.relationship("Media", back_populates="watchlist")
+      media = db.relationship("Media", back_populates="watchlists")
       
 
 
