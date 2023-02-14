@@ -25,3 +25,10 @@ class Review(db.Model):
                   "media": self.media.get_media_info_json(),
                   "fromTMDB": False
             }
+            return review
+
+      @classmethod
+      def from_json(cls,json_response):
+            review = Review(content=json_response["content"],
+                        rating=json_response["rating"])
+            return review
