@@ -9,7 +9,7 @@ class User(db.Model):
       watchlist = db.relationship("Watchlist", back_populates="user")
       reviews = db.relationship("Review", back_populates="user")
 
-      def to_dict(self):
+      def to_dict_simple(self):
             user_dict = {}
             user_dict["id"] = self.id
             user_dict["name"] = self.name

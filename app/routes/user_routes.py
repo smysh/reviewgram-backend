@@ -1,6 +1,6 @@
 from flask import Blueprint, request, jsonify, make_response
 from app import db
-from app.routes.helpers import validate_request_body
+from app.routes.helpers import validate_request_body, validate_model
 from app.models.user import User
 
 user_bp = Blueprint('user_bp', __name__, url_prefix="/users")
@@ -18,14 +18,22 @@ def create_user():
     response_obj = {
         "statuscode": 201,
         "message": f"User: {new_user.user_name} created successfully.",
-        "user": new_user.to_dict()
+        "user": new_user.to_dict_simple()
     }
-    
+
     return make_response(jsonify(response_obj), 201)
 
 @user_bp.route("/<user_id>",methods = ["GET"])
 def get_user_by_id(user_id):
-    pass
+    user = validate_model(User,user_id)
+
+    response_obj = {
+        "statuscode": 200,
+        "message": f"Successfully retrieved {user.user_name}.",
+        "user": user.to_dict_simple()
+    }
+
+    return make_response(jsonify(response_obj), 200)
 
 @user_bp.route("/<user_id>",methods = ["PATCH"])
 def update_user(user_id):
@@ -37,7 +45,9 @@ def delete_user(user_id):
 
 @user_bp.route("/<user_id>/reviews",methods = ["GET"])
 def get_user_reviews(user_id):
-    pass
+    user = validate_model(User,user_id)
+
+    
 
 @user_bp.route("/<user_id>/reviews",methods = ["POST"])
 def add_media_review(user_id):
