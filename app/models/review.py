@@ -13,6 +13,3 @@ class Review(db.Model):
       date_updated = db.Column(db.DateTime, default=dt.datetime.now())
       media_id = db.Column(db.Integer, db.ForeignKey("media.id"))
       media = db.relationship("Media", back_populates="reviews")
-      
-
-    

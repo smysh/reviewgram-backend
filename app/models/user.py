@@ -7,7 +7,7 @@ class User(db.Model):
       user_name = db.Column(db.String(50), nullable=False)
       password = db.Column(db.String(50), nullable=False)
       watchlist = db.relationship("Watchlist", back_populates="user")
-      reviews = db.relationship("Reviews", back_populates="user")
+      reviews = db.relationship("Review", back_populates="user")
 
       def to_dict(self):
             user_dict = {}
