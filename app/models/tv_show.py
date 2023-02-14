@@ -34,7 +34,7 @@ class TVShow:
         self.episode_runtime = episode_runtime
         self.genres = genres
 
-    def to_dict(self):
+    def to_json(self):
         tv_show_dict = {}
         tv_show_dict["TMDB_id"] = self.TMDB_id
         tv_show_dict["name"] = self.name
@@ -67,7 +67,7 @@ class TVShow:
         return show
 
     @classmethod
-    def from_dict(cls, tmdb_data):   #lacks providers
+    def from_json(cls, tmdb_data):   #lacks providers
         genres_list = []
         for genre in tmdb_data["genres"]:
             genres_list.append(genre["name"])

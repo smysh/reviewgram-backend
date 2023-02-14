@@ -63,7 +63,7 @@ def get_tv_show_details_by_id(tmdb_tv_id):
 
     response_obj["statuscode"] = 200
     response_obj["message"]= f"TV show with id: {tmdb_tv_id} retrieved from TMDB"
-    response_obj["data"] = tv_show.to_dict()
+    response_obj["data"] = tv_show.to_json()
 
     return make_response(jsonify(response_obj),200)
 

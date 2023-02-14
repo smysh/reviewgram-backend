@@ -17,7 +17,7 @@ def get_TMDB_tv_show(tmdb_id):
 
     response.raise_for_status()
 
-    tv_show= TVShow.from_dict(response.json())
+    tv_show= TVShow.from_json(response.json())
 
     return tv_show
 
