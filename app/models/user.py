@@ -9,3 +9,22 @@ class User(db.Model):
       watchlist = db.relationship("Watchlist", back_populates="user")
       reviews = db.relationship("Reviews", back_populates="user")
 
+      def to_dict(self):
+            user_dict = {}
+            user_dict["id"] = self.id
+            user_dict["name"] = self.name
+            user_dict["email"] = self.email
+            user_dict["username"] = self.user_name
+
+            return user_dict
+
+      @classmethod
+      def from_json(cls, json_obj):
+            user = User(name=json_obj["name"],
+                        email=json_obj["email"],
+                        user_name=json_obj["username"],
+                        password=json_obj["password"])
+
+            return user
+
+
