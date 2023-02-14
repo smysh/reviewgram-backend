@@ -5,24 +5,26 @@ class TVShow:
                     overview: str,
                     rating: float, 
                     poster_url: str, 
-                    original_language: str,
-                    number_of_episodes: int,
-                    number_of_seasons: int,
-                    status: str,
-                    first_air_date: str,
-                    last_air_date: str,
-                    id=-1,
+                    backdrop_path: str,
+                    original_language="",
+                    origin_country="",
+                    first_air_date="",
+                    last_air_date="",
+                    status="",
+                    number_of_episodes=0,
+                    number_of_seasons=0,
                     providers=[],
                     episode_runtime=[], 
                     genres=[]):
 
-        self.id = id
         self.TMDB_id = TMDB_id
         self.name = name
         self.overview = overview
         self.rating = rating
         self.poster_url = poster_url
+        self.backdrop_path = backdrop_path
         self.original_language = original_language
+        self.origin_country = origin_country
         self.number_of_episodes = number_of_episodes
         self.number_of_seasons = number_of_seasons
         self.status = status
@@ -34,12 +36,13 @@ class TVShow:
 
     def to_dict(self):
         tv_show_dict = {}
-        tv_show_dict["id"] = self.id
-        tv_show_dict["TMDBid"] = self.TMDB_id
+        tv_show_dict["TMDB_id"] = self.TMDB_id
         tv_show_dict["name"] = self.name
         tv_show_dict["overview"] = self.overview
         tv_show_dict["rating"] = self.rating
+        tv_show_dict["poster_url"] = self.poster_url
         tv_show_dict["original_language"] = self.original_language
+        tv_show_dict["origin_country"] = self.origin_country
         tv_show_dict["number_of_episodes"] = self.number_of_episodes
         tv_show_dict["number_of_seasons"] = self.number_of_seasons
         tv_show_dict["status"] = self.status
@@ -51,8 +54,20 @@ class TVShow:
 
         return tv_show_dict
 
+    def get_search_result_dict(self):
+        show = {}
+        show["TMDB_id"] = self.TMDB_id
+        show["name"] = self.name
+        show["overview"] = self.overview
+        show["rating"] = self.rating
+        show["backdrop_path"] = self.backdrop_path
+        show["poster_path"] = self.poster_url
+        show["isMovie"] = False
+
+        return show
+
     @classmethod
-    def from_dict(cls, tmdb_data):
+    def from_dict(cls, tmdb_data):   #lacks providers
         genres_list = []
         for genre in tmdb_data["genres"]:
             genres_list.append(genre["name"])
@@ -61,8 +76,10 @@ class TVShow:
                     name=tmdb_data["name"],
                     overview=tmdb_data["overview"],
                     rating=tmdb_data["vote_average"],
-                    poster_url=tmdb_data["backdrop_path"],
+                    poster_url=tmdb_data["poster_path"],
+                    backdrop_path=tmdb_data["backdrop_path"],
                     original_language=tmdb_data["original_language"],
+                    origin_country=tmdb_data["origin_country"],
                     number_of_episodes=tmdb_data["number_of_episodes"],
                     number_of_seasons=tmdb_data["number_of_seasons"],
                     status=tmdb_data["status"],
@@ -73,5 +90,14 @@ class TVShow:
 
         return tv_show
         
+    @classmethod
+    def from_search(cls, tmdb_tv_search_result):
+        tv_show = TVShow(TMDB_id=tmdb_tv_search_result["id"],
+                    name=tmdb_tv_search_result["name"],
+                    overview=tmdb_tv_search_result["overview"],
+                    rating=tmdb_tv_search_result["vote_average"],
+                    poster_url=tmdb_tv_search_result["poster_path"],
+                    backdrop_path=tmdb_tv_search_result["backdrop_path"])
 
+        return tv_show
 
