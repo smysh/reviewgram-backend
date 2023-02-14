@@ -1,78 +1,101 @@
-from flask import Blueprint, request, jsonify, make_response, render_template
+from flask import Blueprint, request, jsonify, make_response, render_template, abort
 from app import db
-from app.routes.TMDB_API_calls import get_TMDB_tv_show
-from app.movie import Movie
+from app.routes.TMDB_API_calls import get_TMDB_tv_show, search_TMDB_media, get_TMDB_top_movies, get_TMDB_top_shows, get_TMDB_movie
+from app.routes.helpers import validate_request_body
+from app.models.movie import Movie
 from app.tvshow import TVShow
 import urllib.request, json
 import os
 
 media_bp = Blueprint('media_bp', __name__, url_prefix="/media")
 
-
-
 @media_bp.route("/search", methods=["GET"])
 def search_media():
-    url = f"https://api.themoviedb.org/3/search/multi?api_key={os.environ.get('TMDB_API_KEY')}&language=en-US&include_adult=false"
-    search_for= request.args.get("query")
-    url_append = f"&query={search_for}"
-    url += url_append
-    response = urllib.request.urlopen(url)
-    data = response.read()
-    return_data = json.loads(data)
-    media_list = return_data["results"]
-    media_dict = {}
-    index = 0
-    for media in media_list:
-        if media["media_type"] == "movie":
-            movie_obj = Movie.from_TMDB_to_Movie(media)
-            media_dict[index] = movie_obj.to_dict()
-            index += 1
-        elif media["media_type"] == "tv":
-            tvshow_obj = TVShow.from_TMDB_to_TVShow(media)
-            media_dict[index] = tvshow_obj.to_dict()
-            index += 1
-    return media_dict
+    request_body = request.get_json(silent=True)
+    validate_request_body(request_body, ["query"])
+    query = request_body["query"]
+    response_obj = {}
+    
+    try: 
+        search_result = search_TMDB_media(query)
+
+    except Exception as err:
+        print(f"An error occured while searching from media with query: {query}")
+        print(err)
+        response_obj["statuscode"] = 500
+        response_obj["message"] = f"Problem accessing TMDB API"
+        abort(make_response(jsonify(response_obj),500))
+
+    response_obj["statuscode"] = 200
+    response_obj["message"]= f"Searching for: {query} successfull"
+    response_obj["data"] = search_result
+
+    return make_response(jsonify(response_obj),200)
+
 
 @media_bp.route("/top/movies", methods=["GET"])
 def get_top_movies():
-    url = f"https://api.themoviedb.org/3/trending/movie/day?api_key={os.environ.get('TMDB_API_KEY')}&language=en-US&include_adult=false"
-    response = urllib.request.urlopen(url)
-    data = response.read()
-    return_data = json.loads(data)
-    movies_list = return_data["results"]
-    movies_dict = {}
-    index =0
-    for movie in movies_list:
-        movie_obj = Movie.from_TMDB_to_Movie(movie)
-        movies_dict[index] = movie_obj.to_dict()
-        index += 1
-    return movies_dict
+
+    response_obj = {}
+    try:
+        top_movies = get_TMDB_top_movies()
+
+    except Exception as err:
+        print(f"An error occurred while getting top Movies from TMDB API")
+        print(err)
+
+        response_obj["statuscode"] = 500
+        response_obj["message"] = f"Problem accessing TMDB API"
+        abort(make_response(jsonify(response_obj),500))
+        
+
+    response_obj["statuscode"] = 200
+    response_obj["message"]= f"Top movies retrieved from TMDB"
+    response_obj["movies"] = top_movies
+
+    return make_response(jsonify(response_obj),200)
 
 @media_bp.route("/top/tvshows", methods=["GET"])
 def get_top_tvshows():
-    url = f"https://api.themoviedb.org/3/trending/tv/day?api_key={os.environ.get('TMDB_API_KEY')}&language=en-US&include_adult=false"
-    response = urllib.request.urlopen(url)
-    data = response.read()
-    return_data = json.loads(data)
-    tvshows_list = return_data["results"]
-    tvshows_dict = {}
-    index =0
-    for tvshow in tvshows_list:
-        tvshow_obj = TVShow.from_TMDB_to_TVShow(tvshow)
-        tvshows_dict[index] = tvshow_obj.to_dict()
-        index += 1
-    return tvshows_dict
+    response_obj = {}
+    try:
+        top_tvshows = get_TMDB_top_shows()
 
-@media_bp.route("/movies/<movie_id>", methods=["GET"])
-def get_movie_by_id(movie_id):
-    url = f"https://api.themoviedb.org/3/movie/{movie_id}?api_key={os.environ.get('TMDB_API_KEY')}"
-    response = urllib.request.urlopen(url)
-    data = response.read()
-    return_data = json.loads(data)
-    movie_obj = Movie.from_TMDB_to_Movie(return_data)
-   
-    return movie_obj.to_dict()
+    except Exception as err:
+        print(f"An error occurred while getting top TV shows from TMDB API")
+        print(err)
 
+        response_obj["statuscode"] = 500
+        response_obj["message"] = f"Problem accessing TMDB API"
+        abort(make_response(jsonify(response_obj),500))
+        
+
+    response_obj["statuscode"] = 200
+    response_obj["message"]= f"Top TV shows retrieved from TMDB"
+    response_obj["tvshows"] = top_tvshows
+
+    return make_response(jsonify(response_obj),200)
+
+@media_bp.route("/movies/<tmdb_movie_id>", methods=["GET"])
+def get_movie_by_id(tmdb_movie_id):
+    response_obj = {}
+    try:
+        movie = get_TMDB_movie(tmdb_movie_id)
+
+    except Exception as err:
+        print(f"An error occurred while getting the movie with id: {tmdb_movie_id} from TMDB API")
+        print(err)
+
+        response_obj["statuscode"] = 500
+        response_obj["message"] = f"Problem accessing TMDB API"
+        abort(make_response(jsonify(response_obj),500))
+        
+
+    response_obj["statuscode"] = 200
+    response_obj["message"]= f"Movie with id: {tmdb_movie_id} retrieved from TMDB"
+    response_obj["movie"] = movie
+
+    return make_response(jsonify(response_obj),200)
 
 @media_bp.route("/movies/<movie_id>/reviews", methods=["GET"])
 def get_reviews_by_movie_id(movie_id):
@@ -80,21 +103,24 @@ def get_reviews_by_movie_id(movie_id):
 
 @media_bp.route("/tv/<tmdb_tv_id>", methods=["GET"])
 def get_tv_show_details_by_id(tmdb_tv_id):
-    url = f"https://api.themoviedb.org/3/tv/{tmdb_tv_id}?api_key={os.environ.get('TMDB_API_KEY')}"
-    response = urllib.request.urlopen(url)
-    data = response.read()
-    return_data = json.loads(data)
-    tv_obj = TVShow.from_TMDB_to_TVShow(return_data)
-   
-    return tv_obj.to_dict()
-    # tv_show = get_TMDB_tv_show(tmdb_tv_id)
+    response_obj = {}
+    try:
+        tv_show = get_TMDB_tv_show(tmdb_tv_id)
 
-    # response_obj = {
-    #     "statuscode": 200,
-    #     "message": f"TV show with id: {tmdb_tv_id} retrieved from TMDB"
-    # }
+    except Exception as err:
+        print(f"An error occurred while getting the tv_show with id: {tmdb_tv_id} from TMDB API")
+        print(err)
 
-    #return response_obj
+        response_obj["statuscode"] = 500
+        response_obj["message"] = f"Problem accessing TMDB API"
+        abort(make_response(jsonify(response_obj),500))
+        
+
+    response_obj["statuscode"] = 200
+    response_obj["message"]= f"TV show with id: {tmdb_tv_id} retrieved from TMDB"
+    response_obj["tvshow"] = tv_show.to_json()
+
+    return make_response(jsonify(response_obj),200)
 
 
 @media_bp.route("/tv/<tmdb_tv_id>/reviews", methods=["GET"])

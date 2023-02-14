@@ -1,5 +1,5 @@
 class Movie():
-    def __init__(self, id, title, overview, poster_url, release_date, rating, original_language, runtime, status, media_type="movie" ):
+    def __init__(self, id, title, overview, poster_url, release_date, rating, original_language, runtime, status, isMovie=True ):
         # movie_id
         self.id = id
         # movie's title
@@ -21,7 +21,7 @@ class Movie():
         # status of movie - Rumored, Planned, In Production, Post Production, Released, Canceled
         self.status = status
         # is it a movie or tv show
-        self.media_type = media_type
+        self.isMovie = isMovie
 
     def to_dict(self):
         """
@@ -38,7 +38,7 @@ class Movie():
                 "original_language":self.original_language,
                 "runtime":self.runtime,
                 "status":self.status,
-                "media_type":self.media_type
+                "isMovie":self.isMovie,
         }
         return movie_dict
         
@@ -48,9 +48,9 @@ class Movie():
         Creates movie instance from TMDB dict.
         """
         #tmdb_movie_dict.setdefault("genres",[])
-        tmdb_movie_dict.setdefault("runtime",0)
+        tmdb_movie_dict.setdefault("runtime","unknown")
         tmdb_movie_dict.setdefault("status","unknown")
-        tmdb_movie_dict.setdefault("media_type","tv")
+        tmdb_movie_dict.setdefault("isMovie",True)
         return Movie(
             id=tmdb_movie_dict["id"],
             title=tmdb_movie_dict["title"],
@@ -62,7 +62,7 @@ class Movie():
             original_language=tmdb_movie_dict["original_language"],
             runtime=tmdb_movie_dict["runtime"],
             status=tmdb_movie_dict["status"],
-            media_type=tmdb_movie_dict["media_type"]
+            isMovie=tmdb_movie_dict["isMovie"]
         )
 
 
