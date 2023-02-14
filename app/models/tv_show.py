@@ -1,5 +1,5 @@
 class TVShow:
-    def __init__(self, id: int, #The id of the media in our database
+    def __init__(self, #The id of the media in our database
                     TMDB_id: int, 
                     name: str, 
                     overview: str,
@@ -11,6 +11,7 @@ class TVShow:
                     status: str,
                     first_air_date: str,
                     last_air_date: str,
+                    id=-1,
                     providers=[],
                     episode_runtime=[], 
                     genres=[]):
@@ -49,6 +50,28 @@ class TVShow:
         tv_show_dict["genres"] = self.genres
 
         return tv_show_dict
+
+    @classmethod
+    def from_dict(cls, tmdb_data):
+        genres_list = []
+        for genre in tmdb_data["genres"]:
+            genres_list.append(genre["name"])
+
+        tv_show = TVShow(TMDB_id=tmdb_data["id"],
+                    name=tmdb_data["name"],
+                    overview=tmdb_data["overview"],
+                    rating=tmdb_data["vote_average"],
+                    poster_url=tmdb_data["backdrop_path"],
+                    original_language=tmdb_data["original_language"],
+                    number_of_episodes=tmdb_data["number_of_episodes"],
+                    number_of_seasons=tmdb_data["number_of_seasons"],
+                    status=tmdb_data["status"],
+                    first_air_date=tmdb_data["first_air_date"],
+                    last_air_date=tmdb_data["last_air_date"],
+                    episode_runtime=tmdb_data["episode_run_time"],
+                    genres=genres_list)
+
+        return tv_show
         
 
 

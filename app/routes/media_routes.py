@@ -1,4 +1,4 @@
-from flask import Blueprint, request, jsonify, make_response
+from flask import Blueprint, request, jsonify, make_response, abort
 from app import db 
 from app.routes.TMDB_API_calls import get_TMDB_tv_show
 
@@ -27,16 +27,24 @@ def get_reviews_by_movie_id(movie_id):
 
 @media_bp.route("/tv/<tmdb_tv_id>", methods=["GET"])
 def get_tv_show_details_by_id(tmdb_tv_id):
+    response_obj = {}
+    try:
+        tv_show = get_TMDB_tv_show(tmdb_tv_id)
 
-    tv_show = get_TMDB_tv_show(tmdb_tv_id)
+    except Exception as err:
+        print(f"An error occurred while getting the tv_show with id: {tmdb_tv_id} from TMDB API")
+        print(err)
 
-    response_obj = {
-        "statuscode": 200,
-        "message": f"TV show with id: {tmdb_tv_id} retrieved from TMDB",
-        "data": tv_show.to_dict()
-    }
+        response_obj["statuscode"] = 500
+        response_obj["message"] = f"Problem accessing TMDB API"
+        abort(make_response(jsonify(response_obj),500))
+        
 
-    return response_obj
+    response_obj["statuscode"] = 200
+    response_obj["message"]= f"TV show with id: {tmdb_tv_id} retrieved from TMDB"
+    response_obj["data"] = tv_show.to_dict()
+
+    return make_response(jsonify(response_obj),200)
 
 
 @media_bp.route("/tv/<tmdb_tv_id>/reviews", methods=["GET"])
