@@ -7,6 +7,11 @@ from app.models.media import Media
 
 user_bp = Blueprint('user_bp', __name__, url_prefix="/users")
 
+@user_bp.route("/validate",methods = ["GET"])
+def validate_user():
+    pass
+
+#------------------CRUD routes for user--------------------
 @user_bp.route("",methods = ["POST"])
 def create_user():
     request_body = request.get_json(silent=True) #Silent=True prevents Exceptions from being raised
@@ -45,6 +50,8 @@ def update_user(user_id):
 def delete_user(user_id):
     pass
 
+#--------------------Review routes-------------------
+
 @user_bp.route("/<user_id>/reviews",methods = ["GET"])
 def get_user_reviews(user_id):
     user = validate_model(User,user_id)
@@ -59,8 +66,6 @@ def get_user_reviews(user_id):
         "reviews": reviews
     }
     return make_response(jsonify(response_obj), 200)
-
-    
 
 @user_bp.route("/<user_id>/reviews",methods = ["POST"])
 def add_media_review(user_id):
