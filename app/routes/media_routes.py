@@ -2,10 +2,6 @@ from flask import Blueprint, request, jsonify, make_response, render_template, a
 from app import db
 from app.routes.TMDB_API_calls import get_TMDB_tv_show, search_TMDB_media, get_TMDB_top_movies, get_TMDB_top_shows, get_TMDB_movie
 from app.routes.helpers import validate_request_body
-from app.models.movie import Movie
-from app.tvshow import TVShow
-import urllib.request, json
-import os
 
 media_bp = Blueprint('media_bp', __name__, url_prefix="/media")
 
@@ -32,10 +28,8 @@ def search_media():
 
     return make_response(jsonify(response_obj),200)
 
-
 @media_bp.route("/top/movies", methods=["GET"])
 def get_top_movies():
-
     response_obj = {}
     try:
         top_movies = get_TMDB_top_movies()

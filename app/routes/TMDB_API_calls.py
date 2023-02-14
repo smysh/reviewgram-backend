@@ -17,7 +17,6 @@ def search_TMDB_media(query):
     params = {
         "language":"en-US",
         "include_adult": False,
-        "API_KEY":os.environ.get('TMDB_API_KEY'),
         "query":query
     }
     response = requests.get(url,params=params,headers=headers)
@@ -84,25 +83,11 @@ def search_TMDB_movie(search_url, params):
 
     # return movies
 
-# def search_TMDB_media(query):
-#     search_url = f"{TMDB_URL}search/"
-#     params = {
-#         "query": query,
-#     }
-
-#     result = {
-#         "tv_shows": search_TMDB_tv_show(search_url,params),
-#         "movies": search_TMDB_movie(search_url, params)
-#     }
-
-#     return result
-
 def get_TMDB_top_movies():
     url = f"{TMDB_URL}trending/movie/day"
     params = {
         "language":"en-US",
         "include_adult": False,
-        "API_KEY":'edb70fb19e9dd1cc6a0954ab333d8a04'
     }
     response = requests.get(url,params=params,headers=headers)
 
@@ -121,7 +106,6 @@ def get_TMDB_top_shows():
     params = {
         "language":"en-US",
         "include_adult": False,
-        "API_KEY":'edb70fb19e9dd1cc6a0954ab333d8a04'
     }
     response = requests.get(url,params=params,headers=headers)
 
