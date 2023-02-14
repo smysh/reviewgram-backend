@@ -32,7 +32,8 @@ def get_tv_show_details_by_id(tmdb_tv_id):
 
     response_obj = {
         "statuscode": 200,
-        "message": f"TV show with id: {tmdb_tv_id} retrieved from TMDB"
+        "message": f"TV show with id: {tmdb_tv_id} retrieved from TMDB",
+        "data": tv_show.to_dict()
     }
 
     return response_obj
