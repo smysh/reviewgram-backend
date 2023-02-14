@@ -18,7 +18,7 @@ def create_user():
     response_obj = {
         "statuscode": 201,
         "message": f"User: {new_user.user_name} created successfully.",
-        "user": new_user.to_dict_simple()
+        "user": new_user.get_user_data_json()
     }
 
     return make_response(jsonify(response_obj), 201)
@@ -30,7 +30,7 @@ def get_user_by_id(user_id):
     response_obj = {
         "statuscode": 200,
         "message": f"Successfully retrieved {user.user_name}.",
-        "user": user.to_dict_simple()
+        "user": user.get_user_data_json()
     }
 
     return make_response(jsonify(response_obj), 200)
@@ -47,7 +47,16 @@ def delete_user(user_id):
 def get_user_reviews(user_id):
     user = validate_model(User,user_id)
 
-    
+    reviews = []
+    for review in user.reviews:
+        reviews.append(review.to_json())
+
+    response_obj = {
+        "statuscode": 200,
+        "message": f"Successfully retrieved {user.user_name} reviews.",
+        "reviews": reviews
+    }
+    return make_response(jsonify(response_obj), 200)
 
 @user_bp.route("/<user_id>/reviews",methods = ["POST"])
 def add_media_review(user_id):

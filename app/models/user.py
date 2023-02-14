@@ -9,11 +9,18 @@ class User(db.Model):
       watchlist = db.relationship("Watchlist", back_populates="user")
       reviews = db.relationship("Review", back_populates="user")
 
-      def to_dict_simple(self):
+      def get_user_data_json(self):
             user_dict = {}
             user_dict["id"] = self.id
             user_dict["name"] = self.name
             user_dict["email"] = self.email
+            user_dict["username"] = self.user_name
+
+            return user_dict
+
+      def get_id_username_dict(self):
+            user_dict = {}
+            user_dict["id"] = self.id
             user_dict["username"] = self.user_name
 
             return user_dict

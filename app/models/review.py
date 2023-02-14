@@ -13,3 +13,15 @@ class Review(db.Model):
       date_updated = db.Column(db.DateTime, default=dt.datetime.now())
       media_id = db.Column(db.Integer, db.ForeignKey("media.id"))
       media = db.relationship("Media", back_populates="reviews")
+
+      def to_json(self):
+            review = {
+                  "id": self.id,
+                  "rating": self.rating,
+                  "content": self.content,
+                  "date_created": self.date_created,
+                  "date_updated": self.date_updated,
+                  "user": self.user.get_id_username_dict(),
+                  "media": self.media.get_media_info_json(),
+                  "fromTMDB": False
+            }
