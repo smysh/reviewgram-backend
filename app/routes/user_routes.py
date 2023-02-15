@@ -108,10 +108,9 @@ def get_user_watchlist(user_id):
 
     watchlist_query = Watchlist.query.filter(Watchlist.user_id==user_id, 
                                             Watchlist.watched==False).all()
-
     watchlist = []
     for entry in watchlist_query:
-        watchlist.append(entry.to_json)
+        watchlist.append(entry.to_json())
 
     response_obj = {
         "statuscode": 200,
@@ -156,7 +155,7 @@ def add_media_user_watchlist(user_id):
     entry.media = media
     
     db.session.add(entry)
-    db.session.commit
+    db.session.commit()
 
     response_obj = {
         "statuscode": 201,
