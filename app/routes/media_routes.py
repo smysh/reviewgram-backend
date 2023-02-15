@@ -9,6 +9,10 @@ from app.routes.TMDB_API_calls import (get_TMDB_tv_show,
                                         get_TMDB_tv_show_reviews,
                                         get_TMDB_movie_reviews)
 from app.routes.helpers import validate_request_body
+from app.models.movie import Movie
+from app.models.tv_show import TVShow
+import urllib.request, json
+import os
 
 media_bp = Blueprint('media_bp', __name__, url_prefix="/media")
 
@@ -119,6 +123,7 @@ def get_tv_show_details_by_id(tmdb_tv_id):
 
     return make_response(jsonify(response_obj),200)
 
+#----------------Reviews for media endpoints ------------------
 
 @media_bp.route("/tv/<tmdb_tv_id>/reviews", methods=["GET"])
 def get_reviews_by_tv_id(tmdb_tv_id):

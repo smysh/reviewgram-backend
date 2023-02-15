@@ -4,6 +4,8 @@ from app.routes.helpers import validate_request_body, validate_model
 from app.models.user import User
 from app.models.review import Review
 from app.models.media import Media
+from app.models.watchlist import Watchlist
+from datetime import datetime
 
 user_bp = Blueprint('user_bp', __name__, url_prefix="/users")
 
@@ -74,7 +76,6 @@ def add_media_review(user_id):
     validate_request_body(request_body, ["content","rating","media"])
     validate_request_body(request_body["media"],["TMDB_id","isMovie","title"])
 
-    review = Review.from_json(request_body)
     json_media = request_body["media"]
     media = Media.query.filter_by(is_movie=json_media["isMovie"],
                             TMDB_id=json_media["TMDB_id"]).first()
@@ -83,19 +84,145 @@ def add_media_review(user_id):
         db.session.add(media)
         db.session.commit()
 
-    review.media = media
-    review.user = user
+    review = Review.query.filter_by(user=user,media=media).first()
 
-    db.session.add(review)
-    db.session.commit()
+    if not review:
+        review = Review.from_json(request_body)
+        review.media = media
+        review.user = user
+        db.session.add(review)
+        db.session.commit()
+    else:
+        review.content = request_body["content"]
+        review.rating = request_body["rating"]
+        review.updated = datetime.now()
+        db.session.commit()
 
     response_obj = {
         "statuscode": 201,
-        "message": f"Successfully creting {user.user_name} review on {media.title}.",
+        "message": f"Successfully creating {user.user_name} review on {media.title}.",
         "review": review.to_json()
     }
     return make_response(jsonify(response_obj), 201)
 
 @user_bp.route("/<user_id>/reviews",methods = ["PATCH"])
 def update_media_review(user_id):
+    pass
+
+#------------------Watchlist routes------------------------
+@user_bp.route("/<user_id>/watchlist",methods = ["GET"])
+def get_user_watchlist(user_id):
+    user = validate_model(User,user_id)
+
+    watchlist_query = Watchlist.query.filter(Watchlist.user_id==user_id, 
+                                            Watchlist.watched==False).all()
+    watchlist = []
+    for entry in watchlist_query:
+        watchlist.append(entry.to_json())
+
+    response_obj = {
+        "statuscode": 200,
+        "message": f"Successfully getting {user.user_name} watchlist.",
+        "watchlist": watchlist
+    }
+    return make_response(jsonify(response_obj), 200)
+
+@user_bp.route("/<user_id>/watched",methods = ["GET"])
+def get_user_watched(user_id):
+    user = validate_model(User,user_id)
+
+    watchlist_query = Watchlist.query.filter(Watchlist.user_id==user_id, 
+                                            Watchlist.watched==True).all()
+
+    watched = []
+    for entry in watchlist_query:
+        watched.append(entry.to_json())
+
+    response_obj = {
+        "statuscode": 200,
+        "message": f"Successfully getting {user.user_name} watched list.",
+        "watched": watched
+    }
+    return make_response(jsonify(response_obj), 200)
+
+@user_bp.route("/<user_id>/watchlist",methods = ["POST"])
+def add_media_user_watchlist(user_id):
+    user = validate_model(User,user_id)
+    request_body = request.get_json(silent=True)
+    validate_request_body(request_body, ["TMDB_id","isMovie","title"])
+
+    media = Media.query.filter_by(is_movie=request_body["isMovie"],
+                            TMDB_id=request_body["TMDB_id"]).first()
+    if not media:
+        media = Media.from_json(request_body)
+        db.session.add(media)
+        db.session.commit()
+
+    entry = Watchlist.query.filter_by(user=user,media=media).first()
+
+    if not entry:
+        entry = Watchlist(watched=False)
+        entry.user = user
+        entry.media = media
+        db.session.add(entry)
+        db.session.commit()
+
+    elif entry.watched:
+        entry.watched = False
+        db.session.commit()
+
+    response_obj = {
+        "statuscode": 201,
+        "message": f"Successfully adding {media.title} to {user.user_name} watchlist",
+        "entry": entry.to_json()
+    }
+    return make_response(jsonify(response_obj), 201)
+
+@user_bp.route("/<user_id>/watched",methods = ["POST"])
+def add_media_user_watched(user_id):
+    user = validate_model(User,user_id)
+    request_body = request.get_json(silent=True)
+    validate_request_body(request_body, ["TMDB_id","isMovie","title"])
+
+    media = Media.query.filter_by(is_movie=request_body["isMovie"],
+                            TMDB_id=request_body["TMDB_id"]).first()
+    if not media:
+        media = Media.from_json(request_body)
+        db.session.add(media)
+        db.session.commit()
+
+    entry = Watchlist.query.filter_by(user=user,media=media).first()
+
+    if not entry:
+        entry = Watchlist(watched=True)
+        entry.user = user
+        entry.media = media
+        db.session.add(entry)
+        db.session.commit()
+
+    elif not entry.watched:
+        entry.watched = True
+        db.session.commit()
+
+    response_obj = {
+        "statuscode": 201,
+        "message": f"Successfully adding {media.title} to {user.user_name} watched list",
+        "entry": entry.to_json()
+    }
+    return make_response(jsonify(response_obj), 201)
+
+@user_bp.route("/<user_id>/watchlist/<watchlist_id>",methods = ["PATCH"])
+def add_media_from_user_watchlist_to_watched(user_id):
+    pass
+
+@user_bp.route("/<user_id>/to-watchlist",methods = ["PATCH"])
+def add_media_from_user_watched_to_watchlist(user_id):
+    pass
+
+@user_bp.route("/<user_id>/watched",methods = ["DELETE"])
+def delete_media_from_user_watched(user_id):
+    pass
+
+@user_bp.route("/<user_id>/watchlist",methods = ["DELETE"])
+def delete_media_from_user_watchlist(user_id):
     pass
