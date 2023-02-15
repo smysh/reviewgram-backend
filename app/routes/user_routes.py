@@ -4,6 +4,7 @@ from app.routes.helpers import validate_request_body, validate_model
 from app.models.user import User
 from app.models.review import Review
 from app.models.media import Media
+from app.models.watchlist import Watchlist
 
 user_bp = Blueprint('user_bp', __name__, url_prefix="/users")
 
@@ -91,11 +92,72 @@ def add_media_review(user_id):
 
     response_obj = {
         "statuscode": 201,
-        "message": f"Successfully creting {user.user_name} review on {media.title}.",
+        "message": f"Successfully creating {user.user_name} review on {media.title}.",
         "review": review.to_json()
     }
     return make_response(jsonify(response_obj), 201)
 
 @user_bp.route("/<user_id>/reviews",methods = ["PATCH"])
 def update_media_review(user_id):
+    pass
+
+#------------------Watchlist routes------------------------
+@user_bp.route("/<user_id>/watchlist",methods = ["GET"])
+def get_user_watchlist(user_id):
+    user = validate_model(User,user_id)
+
+    watchlist_query = Watchlist.query.filter(Watchlist.user_id==user_id, 
+                                            Watchlist.watched==False).all()
+
+    watchlist = []
+    for entry in watchlist_query:
+        watchlist.append(entry.to_json)
+
+    response_obj = {
+        "statuscode": 200,
+        "message": f"Successfully geting {user.user_name} watchlist.",
+        "watchlist": watchlist
+    }
+    return make_response(jsonify(response_obj), 200)
+
+@user_bp.route("/<user_id>/watched",methods = ["GET"])
+def get_user_watched(user_id):
+    user = validate_model(User,user_id)
+
+    watchlist_query = Watchlist.query.filter(Watchlist.user_id==user_id, 
+                                            Watchlist.watched==True).all()
+
+    watched = []
+    for entry in watchlist_query:
+        watched.append(entry.to_json)
+
+    response_obj = {
+        "statuscode": 200,
+        "message": f"Successfully geting {user.user_name} watched list.",
+        "watched": watched
+    }
+    return make_response(jsonify(response_obj), 200)
+
+@user_bp.route("/<user_id>/watchlist",methods = ["POST"])
+def add_media_user_watchlist(user_id):
+    pass
+
+@user_bp.route("/<user_id>/watched",methods = ["POST"])
+def add_media_user_watched(user_id):
+    pass
+
+@user_bp.route("/<user_id>/to-watched",methods = ["PATCH"])
+def add_media_from_user_watchlist_to_watched(user_id):
+    pass
+
+@user_bp.route("/<user_id>/to-watchlist",methods = ["PATCH"])
+def add_media_from_user_watched_to_watchlist(user_id):
+    pass
+
+@user_bp.route("/<user_id>/watched",methods = ["DELETE"])
+def delete_media_from_user_watched(user_id):
+    pass
+
+@user_bp.route("/<user_id>/watchlist",methods = ["DELETE"])
+def delete_media_from_user_watchlist(user_id):
     pass
