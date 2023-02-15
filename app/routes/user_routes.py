@@ -140,7 +140,32 @@ def get_user_watched(user_id):
 
 @user_bp.route("/<user_id>/watchlist",methods = ["POST"])
 def add_media_user_watchlist(user_id):
-    pass
+    user = validate_model(User,user_id)
+    request_body = request.get_json(silent=True)
+    validate_request_body(request_body, ["TMDB_id","isMovie","title"])
+
+    entry = Watchlist(watched=False)
+    entry.user = user
+
+    media = Media.query.filter_by(is_movie=request_body["isMovie"],
+                            TMDB_id=request_body["TMDB_id"]).first()
+    if not media:
+        media = Media.from_json(request_body)
+        db.session.add(media)
+        db.session.commit()
+    entry.media = media
+    
+    db.session.add(entry)
+    db.session.commit
+
+    response_obj = {
+        "statuscode": 201,
+        "message": f"Successfully adding {media.title} to {user.user_name} watchlist.",
+        "entry": entry.to_json()
+    }
+    return make_response(jsonify(response_obj), 201)
+
+
 
 @user_bp.route("/<user_id>/watched",methods = ["POST"])
 def add_media_user_watched(user_id):
