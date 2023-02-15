@@ -71,16 +71,15 @@ def get_TMDB_movie(tmdb_id):
     return movie_obj.to_dict()
 
 def search_TMDB_movie(search_url, params):
-    return search_TMDB_tv_show(search_url, params)
-    # response = requests.get(f"{search_url}movie",params=params,headers=headers)
+    response = requests.get(f"{search_url}movie",params=params,headers=headers)
 
-    # response.raise_for_status()
+    response.raise_for_status()
     
-    # movies_api = response.json()["results"]
-    # movies = []
-    # for movie in movies_api:
-    #     new_movie = TVShow.from_search(movie)
-    #     movies.append(new_movie)
+    movies_api = response.json()["results"]
+    movies = []
+    for movie in movies_api:
+        new_movie = Movie.from_TMDB_to_Movie(movie)
+        movies.append(new_movie.to_dict())
 
     # return movies
 
@@ -89,6 +88,7 @@ def get_TMDB_top_movies():
     params = {
         "language":"en-US",
         "include_adult": False,
+        "API_KEY":os.environ.get('TMDB_API_KEY')
     }
     response = requests.get(url,params=params,headers=headers)
 
