@@ -3,7 +3,6 @@ import os
 from requests.structures import CaseInsensitiveDict
 from app.models.tv_show import TVShow
 from app.models.movie import Movie
-from app.models.review import Review
 
 MAX_RESULTS_PER_PAGE = 10
 TMDB_URL = "https://api.themoviedb.org/3/"

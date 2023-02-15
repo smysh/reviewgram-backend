@@ -9,10 +9,6 @@ from app.routes.TMDB_API_calls import (get_TMDB_tv_show,
                                         get_TMDB_tv_show_reviews,
                                         get_TMDB_movie_reviews)
 from app.routes.helpers import validate_request_body
-from app.models.movie import Movie
-from app.models.tv_show import TVShow
-import urllib.request, json
-import os
 
 media_bp = Blueprint('media_bp', __name__, url_prefix="/media")
 
