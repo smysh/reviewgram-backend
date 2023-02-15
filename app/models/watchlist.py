@@ -10,6 +10,13 @@ class Watchlist(db.Model):
       media_id = db.Column(db.Integer,db.ForeignKey("media.id"))
       media = db.relationship("Media", back_populates="watchlists")
       
-
+      def to_json(self):
+            entry = {
+                  "id": self.id,
+                  "watched": self.watched,
+                  "user": self.user.get_id_username_dict(),
+                  "media": self.media.get_media_info_json()
+            }
+            return entry
 
 

@@ -119,6 +119,7 @@ def get_tv_show_details_by_id(tmdb_tv_id):
 
     return make_response(jsonify(response_obj),200)
 
+#----------------Reviews for media endpoints ------------------
 
 @media_bp.route("/tv/<tmdb_tv_id>/reviews", methods=["GET"])
 def get_reviews_by_tv_id(tmdb_tv_id):
