@@ -120,6 +120,34 @@ def get_TMDB_top_shows():
         index += 1
     return tvshows_dict
 
+def get_TMDB_movie_reviews(tmdb_id):
+    url = f"{TMDB_URL}/movie/{tmdb_id}/reviews"
+    params = {
+        "language":"en-US"
+    }
+
+    response = requests.get(url,headers=headers,params=params)
+    response.raise_for_status()
+
+    tmdb_reviews = response.json()["results"]
+
+    reviews = []
+    for tmdb_review in tmdb_reviews:
+        review = {
+            "user": {
+                "id": None,
+                "username": tmdb_review["author"]
+            },
+            "content": tmdb_review["content"],
+            "rating": tmdb_review["author_details"]["rating"],
+            "created": tmdb_review["created_at"],
+            "updated": tmdb_review["updated_at"],
+            "fromTMDB": True
+        }
+        reviews.append(review)
+
+    return reviews
+
 #Later can be done by page
 def get_TMDB_tv_show_reviews(tmdb_id):
     url = f"{TMDB_URL}/tv/{tmdb_id}/reviews"
@@ -146,7 +174,7 @@ def get_TMDB_tv_show_reviews(tmdb_id):
             "fromTMDB": True
         }
         reviews.append(review)
-        
+
     return reviews
 
 

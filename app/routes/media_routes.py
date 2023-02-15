@@ -6,7 +6,8 @@ from app.routes.TMDB_API_calls import (get_TMDB_tv_show,
                                         get_TMDB_top_movies, 
                                         get_TMDB_top_shows, 
                                         get_TMDB_movie,
-                                        get_TMDB_tv_show_reviews)
+                                        get_TMDB_tv_show_reviews,
+                                        get_TMDB_movie_reviews)
 from app.routes.helpers import validate_request_body
 
 media_bp = Blueprint('media_bp', __name__, url_prefix="/media")
@@ -153,4 +154,31 @@ def get_reviews_by_tv_id(tmdb_tv_id):
 
 @media_bp.route("/movies/<tmdb_movie_id>/reviews", methods=["GET"])
 def get_reviews_by_movie_id(tmdb_movie_id):
-    pass
+    response_obj = {}
+    reviews = []
+    try:
+        tmdb_reviews = get_TMDB_movie_reviews(tmdb_movie_id)
+
+    except Exception as err:
+        print(f"An error occurred while getting reviews for Movie id: {tmdb_movie_id} from TMDB API")
+        print(err)
+
+        response_obj["statuscode"] = 500
+        response_obj["message"] = f"Problem accessing TMDB API"
+        abort(make_response(jsonify(response_obj),500))
+        
+    media = Media.query.filter_by(is_movie=True,
+                            TMDB_id=tmdb_movie_id).first()
+    if not media:
+        reviews = tmdb_reviews
+        media = Media(TMDB_id=tmdb_movie_id,is_movie=True)
+    else:
+        reviews.extend(media.get_media_reviews_json())
+        reviews.extend(tmdb_reviews)
+
+    response_obj["statuscode"] = 200
+    response_obj["message"]= f"Reviews for Movie with id: {tmdb_movie_id} retrieved Successfully"
+    response_obj["reviews"] = reviews
+    response_obj["media"] = media.get_media_info_json()
+
+    return make_response(jsonify(response_obj),200)
