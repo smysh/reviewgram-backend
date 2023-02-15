@@ -176,6 +176,18 @@ def get_TMDB_tv_show_reviews(tmdb_id):
 
     return reviews
 
+def get_images_url_from_TMDB():
+    url = f"{TMDB_URL}/configuration"
+    response = requests.get(url,headers=headers)
+    response.raise_for_status()
+
+    configuration = response.json()["images"]
+    
+    images_url_info = {}
+    images_url_info["base_url"] = configuration["base_url"]
+    images_url_info["secure_base_url"] = configuration["secure_base_url"]
+    images_url_info["poster_sizes"] = configuration["poster_sizes"]
+    return images_url_info
 
 
 

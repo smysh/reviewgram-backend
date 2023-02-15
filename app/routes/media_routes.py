@@ -7,10 +7,32 @@ from app.routes.TMDB_API_calls import (get_TMDB_tv_show,
                                         get_TMDB_top_shows, 
                                         get_TMDB_movie,
                                         get_TMDB_tv_show_reviews,
-                                        get_TMDB_movie_reviews)
+                                        get_TMDB_movie_reviews,
+                                        get_images_url_from_TMDB)
 from app.routes.helpers import validate_request_body
 
 media_bp = Blueprint('media_bp', __name__, url_prefix="/media")
+
+@media_bp.route("/image-url", methods=["GET"])
+def get_images_url():
+    response_obj = {}
+    try:
+        images_url_config = get_images_url_from_TMDB()
+
+    except Exception as err:
+        print(f"An error occurred while getting url for images from TMDB API")
+        print(err)
+
+        response_obj["statuscode"] = 500
+        response_obj["message"] = f"Problem accessing TMDB API"
+        abort(make_response(jsonify(response_obj),500))
+        
+
+    response_obj["statuscode"] = 200
+    response_obj["message"]= f"Images url configuration retrieved"
+    response_obj["configuration"] = images_url_config
+
+    return make_response(jsonify(response_obj),200)
 
 @media_bp.route("/search", methods=["POST"])
 def search_media():
