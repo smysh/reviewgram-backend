@@ -19,9 +19,24 @@ class Review(db.Model):
                   "id": self.id,
                   "rating": self.rating,
                   "content": self.content,
-                  "date_created": self.date_created,
-                  "date_updated": self.date_updated,
+                  "created": self.date_created,
+                  "updated": self.date_updated,
                   "user": self.user.get_id_username_dict(),
                   "media": self.media.get_media_info_json(),
                   "fromTMDB": False
             }
+            return review
+
+      @classmethod
+      def from_json(cls,json_response):
+            review = Review(content=json_response["content"],
+                        rating=json_response["rating"])
+            return review
+
+      def from_tmdb_json(cls,tmdb_response):
+            review = Review(content=tmdb_response["content"],
+                        rating=tmdb_response["author_details"]["rating"],
+                        date_created=tmdb_response["created_at"],
+                        date_updated=tmdb_response["updated_at"])
+
+            return review

@@ -10,8 +10,27 @@ class Media(db.Model):
 
       def get_media_info_json(self):
             media_dict = {
+                  "id": self.id,
                   "is_movie": self.is_movie,
                   "TMDB_id": self.TMDB_id,
                   "title": self.title,
             }
             return media_dict
+
+      def get_media_reviews_json(self):
+            if not self.reviews:
+                  return None
+
+            json_reviews = []
+            for review in self.reviews:
+                  json_reviews.append(review.to_json())
+
+            return json_reviews
+
+      @classmethod
+      def from_json(cls, json_response):
+            media = Media(TMDB_id= json_response["TMDB_id"],
+                        is_movie=json_response["isMovie"],
+                        title=json_response["title"])
+
+            return media

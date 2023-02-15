@@ -1,7 +1,7 @@
 class Movie():
-    def __init__(self, id, title, overview, poster_url, release_date, rating, original_language, runtime, status, isMovie=True ):
+    def __init__(self, TMDB_id, title, overview, poster_url, release_date, rating, original_language, runtime, status, isMovie=True ):
         # movie_id
-        self.id = id
+        self.TMDB_id = TMDB_id
         # movie's title
         self.title = title
         # brief description of movie
@@ -28,7 +28,7 @@ class Movie():
         Returns dictionary of movie data.
         """
         movie_dict = {
-                "id": self.id,
+                "TMDB_id": self.TMDB_id,
                 "title": self.title,
                 "overview": self.overview,
                 "poster_url": self.poster_url,
@@ -52,7 +52,7 @@ class Movie():
         tmdb_movie_dict.setdefault("status","unknown")
         tmdb_movie_dict.setdefault("isMovie",True)
         return Movie(
-            id=tmdb_movie_dict["id"],
+            TMDB_id=tmdb_movie_dict["id"],
             title=tmdb_movie_dict["title"],
             overview=tmdb_movie_dict["overview"],
             poster_url=tmdb_movie_dict["poster_path"],
