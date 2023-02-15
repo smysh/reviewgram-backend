@@ -5,6 +5,7 @@ from app.models.user import User
 from app.models.review import Review
 from app.models.media import Media
 from app.models.watchlist import Watchlist
+from datetime import datetime
 
 user_bp = Blueprint('user_bp', __name__, url_prefix="/users")
 
@@ -75,7 +76,6 @@ def add_media_review(user_id):
     validate_request_body(request_body, ["content","rating","media"])
     validate_request_body(request_body["media"],["TMDB_id","isMovie","title"])
 
-    review = Review.from_json(request_body)
     json_media = request_body["media"]
     media = Media.query.filter_by(is_movie=json_media["isMovie"],
                             TMDB_id=json_media["TMDB_id"]).first()
@@ -84,11 +84,19 @@ def add_media_review(user_id):
         db.session.add(media)
         db.session.commit()
 
-    review.media = media
-    review.user = user
+    review = Review.query.filter_by(user=user,media=media).first()
 
-    db.session.add(review)
-    db.session.commit()
+    if not review:
+        review = Review.from_json(request_body)
+        review.media = media
+        review.user = user
+        db.session.add(review)
+        db.session.commit()
+    else:
+        review.content = request_body["content"]
+        review.rating = request_body["rating"]
+        review.updated = datetime.now()
+        db.session.commit()
 
     response_obj = {
         "statuscode": 201,
@@ -114,7 +122,7 @@ def get_user_watchlist(user_id):
 
     response_obj = {
         "statuscode": 200,
-        "message": f"Successfully geting {user.user_name} watchlist.",
+        "message": f"Successfully getting {user.user_name} watchlist.",
         "watchlist": watchlist
     }
     return make_response(jsonify(response_obj), 200)
@@ -132,7 +140,7 @@ def get_user_watched(user_id):
 
     response_obj = {
         "statuscode": 200,
-        "message": f"Successfully geting {user.user_name} watched list.",
+        "message": f"Successfully getting {user.user_name} watched list.",
         "watched": watched
     }
     return make_response(jsonify(response_obj), 200)
@@ -165,12 +173,10 @@ def add_media_user_watchlist(user_id):
 
     response_obj = {
         "statuscode": 201,
-        "message": f"Successfully adding {media.title} to {user.user_name} watched list",
+        "message": f"Successfully adding {media.title} to {user.user_name} watchlist",
         "entry": entry.to_json()
     }
     return make_response(jsonify(response_obj), 201)
-
-
 
 @user_bp.route("/<user_id>/watched",methods = ["POST"])
 def add_media_user_watched(user_id):
@@ -205,7 +211,7 @@ def add_media_user_watched(user_id):
     }
     return make_response(jsonify(response_obj), 201)
 
-@user_bp.route("/<user_id>/to-watched",methods = ["PATCH"])
+@user_bp.route("/<user_id>/watchlist/<watchlist_id>",methods = ["PATCH"])
 def add_media_from_user_watchlist_to_watched(user_id):
     pass
 
