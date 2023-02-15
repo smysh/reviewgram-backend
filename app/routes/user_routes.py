@@ -128,7 +128,7 @@ def get_user_watched(user_id):
 
     watched = []
     for entry in watchlist_query:
-        watched.append(entry.to_json)
+        watched.append(entry.to_json())
 
     response_obj = {
         "statuscode": 200,
@@ -143,23 +143,29 @@ def add_media_user_watchlist(user_id):
     request_body = request.get_json(silent=True)
     validate_request_body(request_body, ["TMDB_id","isMovie","title"])
 
-    entry = Watchlist(watched=False)
-    entry.user = user
-
     media = Media.query.filter_by(is_movie=request_body["isMovie"],
                             TMDB_id=request_body["TMDB_id"]).first()
     if not media:
         media = Media.from_json(request_body)
         db.session.add(media)
         db.session.commit()
-    entry.media = media
-    
-    db.session.add(entry)
-    db.session.commit()
+
+    entry = Watchlist.query.filter_by(user=user,media=media).first()
+
+    if not entry:
+        entry = Watchlist(watched=False)
+        entry.user = user
+        entry.media = media
+        db.session.add(entry)
+        db.session.commit()
+
+    elif entry.watched:
+        entry.watched = False
+        db.session.commit()
 
     response_obj = {
         "statuscode": 201,
-        "message": f"Successfully adding {media.title} to {user.user_name} watchlist.",
+        "message": f"Successfully adding {media.title} to {user.user_name} watched list",
         "entry": entry.to_json()
     }
     return make_response(jsonify(response_obj), 201)
@@ -168,7 +174,36 @@ def add_media_user_watchlist(user_id):
 
 @user_bp.route("/<user_id>/watched",methods = ["POST"])
 def add_media_user_watched(user_id):
-    pass
+    user = validate_model(User,user_id)
+    request_body = request.get_json(silent=True)
+    validate_request_body(request_body, ["TMDB_id","isMovie","title"])
+
+    media = Media.query.filter_by(is_movie=request_body["isMovie"],
+                            TMDB_id=request_body["TMDB_id"]).first()
+    if not media:
+        media = Media.from_json(request_body)
+        db.session.add(media)
+        db.session.commit()
+
+    entry = Watchlist.query.filter_by(user=user,media=media).first()
+
+    if not entry:
+        entry = Watchlist(watched=True)
+        entry.user = user
+        entry.media = media
+        db.session.add(entry)
+        db.session.commit()
+
+    elif not entry.watched:
+        entry.watched = True
+        db.session.commit()
+
+    response_obj = {
+        "statuscode": 201,
+        "message": f"Successfully adding {media.title} to {user.user_name} watched list",
+        "entry": entry.to_json()
+    }
+    return make_response(jsonify(response_obj), 201)
 
 @user_bp.route("/<user_id>/to-watched",methods = ["PATCH"])
 def add_media_from_user_watchlist_to_watched(user_id):
