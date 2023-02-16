@@ -92,8 +92,7 @@ class TVShow:
                     name=tmdb_tv_search_result["name"],
                     overview=tmdb_tv_search_result["overview"],
                     rating=tmdb_tv_search_result["vote_average"],
-                    poster_url=tmdb_tv_search_result["poster_path"],
-                    backdrop_path=tmdb_tv_search_result["backdrop_path"])
+                    poster_url=tmdb_tv_search_result["poster_path"])
 
         return tv_show
 
