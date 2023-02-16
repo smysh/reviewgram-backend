@@ -5,7 +5,6 @@ class TVShow:
                     overview: str,
                     rating: float, 
                     poster_url: str, 
-                    backdrop_path: str,
                     original_language="",
                     origin_country="",
                     first_air_date="",
@@ -22,7 +21,6 @@ class TVShow:
         self.overview = overview
         self.rating = rating
         self.poster_url = poster_url
-        self.backdrop_path = backdrop_path
         self.original_language = original_language
         self.origin_country = origin_country
         self.number_of_episodes = number_of_episodes
@@ -60,7 +58,6 @@ class TVShow:
         show["name"] = self.name
         show["overview"] = self.overview
         show["rating"] = self.rating
-        show["backdrop_path"] = self.backdrop_path
         show["poster_path"] = self.poster_url
         show["isMovie"] = False
 
@@ -77,7 +74,6 @@ class TVShow:
                     overview=tmdb_data["overview"],
                     rating=tmdb_data["vote_average"],
                     poster_url=tmdb_data["poster_path"],
-                    backdrop_path=tmdb_data["backdrop_path"],
                     original_language=tmdb_data["original_language"],
                     origin_country=tmdb_data["origin_country"],
                     number_of_episodes=tmdb_data["number_of_episodes"],
