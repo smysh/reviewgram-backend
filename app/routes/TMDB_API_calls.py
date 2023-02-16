@@ -26,7 +26,7 @@ def search_TMDB_media(query):
     return_media = []
     for media in media_list:
         if media["media_type"] == "movie":
-            movie_obj = Movie.from_TMDB_to_Movie(media)
+            movie_obj = Movie.from_TMDB_search_to_movie(media)
             return_media.append(movie_obj.to_dict())
         elif media["media_type"] == "tv":
             tvshow_obj = TVShow.from_search(media)
@@ -93,10 +93,10 @@ def get_TMDB_top_movies():
     movies = []
     
     for movie in movies_list:
-        movie_obj = Movie.from_TMDB_to_Movie(movie)
-        movies_dict[index] = movie_obj.to_dict()
-        index += 1
-    return movies_dict
+        movie_obj = Movie.from_TMDB_search_to_movie(movie)
+        movies.append(movie_obj.to_dict())
+
+    return movies
 
 def get_TMDB_top_shows():
     url = f"{TMDB_URL}trending/tv/day"
