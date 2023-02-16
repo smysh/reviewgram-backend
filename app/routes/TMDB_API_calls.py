@@ -23,18 +23,15 @@ def search_TMDB_media(query):
     response.raise_for_status()
     
     media_list = response.json()["results"]
-    media_dict = {}
-    index = 0
+    return_media = []
     for media in media_list:
         if media["media_type"] == "movie":
             movie_obj = Movie.from_TMDB_to_Movie(media)
-            media_dict[index] = movie_obj.to_dict()
-            index += 1
+            return_media.append(movie_obj.to_dict())
         elif media["media_type"] == "tv":
             tvshow_obj = TVShow.from_search(media)
-            media_dict[index] = tvshow_obj.get_search_result_dict()
-            index += 1
-    return media_dict
+            return_media.append(tvshow_obj.get_search_result_dict())
+    return return_media
     
 def get_TMDB_tv_show(tmdb_id):
     url = f"{TMDB_URL}tv/{tmdb_id}"
@@ -80,7 +77,7 @@ def search_TMDB_movie(search_url, params):
         new_movie = Movie.from_TMDB_to_Movie(movie)
         movies.append(new_movie.to_dict())
 
-    # return movies
+    return movies
 
 def get_TMDB_top_movies():
     url = f"{TMDB_URL}trending/movie/day"
@@ -93,13 +90,13 @@ def get_TMDB_top_movies():
 
     response.raise_for_status()
     movies_list = response.json()["results"]
-    movies_dict = {}
-    index =0
+    movies = []
+    #index =0
     for movie in movies_list:
         movie_obj = Movie.from_TMDB_to_Movie(movie)
-        movies_dict[index] = movie_obj.to_dict()
-        index += 1
-    return movies_dict
+        movies.append(movie_obj.to_dict())
+        #index += 1
+    return movies
 
 def get_TMDB_top_shows():
     url = f"{TMDB_URL}trending/tv/day"
@@ -111,13 +108,11 @@ def get_TMDB_top_shows():
 
     response.raise_for_status()
     tvshows_list = response.json()["results"]
-    tvshows_dict = {}
-    index =0
+    tvshows = []
     for tvshow in tvshows_list:
         tvshow_obj = TVShow.from_search(tvshow)
-        tvshows_dict[index] = tvshow_obj.get_search_result_dict()
-        index += 1
-    return tvshows_dict
+        tvshows.append(tvshow_obj.get_search_result_dict())
+    return tvshows
 
 def get_TMDB_movie_reviews(tmdb_id):
     url = f"{TMDB_URL}/movie/{tmdb_id}/reviews"
