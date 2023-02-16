@@ -1,5 +1,5 @@
 class Movie():
-    def __init__(self, TMDB_id, title, overview, poster_url, release_date, rating, original_language, runtime, status, isMovie=True ):
+    def __init__(self, TMDB_id, title, overview, poster_url, rating, release_date="", original_language="", runtime=0, status="", genres=[], isMovie=True ):
         # movie_id
         self.TMDB_id = TMDB_id
         # movie's title
@@ -13,7 +13,7 @@ class Movie():
         # vote_average from TMDB rating
         self.rating = rating
         # list of genres
-        #self.genres = genres
+        self.genres = genres
         # language code for movie language 'en' for english
         self.original_language = original_language
         # movie runtime 
@@ -34,7 +34,7 @@ class Movie():
                 "poster_url": self.poster_url,
                 "release_date": self.release_date,
                 "rating": self.rating,
-                #"genres":self.genres,
+                "genres":self.genres,
                 "original_language":self.original_language,
                 "runtime":self.runtime,
                 "status":self.status,
@@ -43,11 +43,24 @@ class Movie():
         return movie_dict
         
     @classmethod
+    def from_TMDB_search_to_movie(cls, tmdb_movie_dict):
+        return Movie(
+            TMDB_id=tmdb_movie_dict["id"],
+            title=tmdb_movie_dict["title"],
+            overview=tmdb_movie_dict["overview"],
+            poster_url=tmdb_movie_dict["poster_path"],
+            rating=tmdb_movie_dict["vote_average"]
+        )
+
+    @classmethod
     def from_TMDB_to_Movie(cls, tmdb_movie_dict):
         """
         Creates movie instance from TMDB dict.
         """
-        #tmdb_movie_dict.setdefault("genres",[])
+        genres_list = []
+        for genre in tmdb_movie_dict["genres"]:
+            genres_list.append(genre["name"])
+
         tmdb_movie_dict.setdefault("runtime","unknown")
         tmdb_movie_dict.setdefault("status","unknown")
         tmdb_movie_dict.setdefault("isMovie",True)
@@ -58,7 +71,7 @@ class Movie():
             poster_url=tmdb_movie_dict["poster_path"],
             release_date=tmdb_movie_dict["release_date"],
             rating=tmdb_movie_dict["vote_average"],
-            #genres=tmdb_movie_dict["genres"],
+            genres=genres_list,
             original_language=tmdb_movie_dict["original_language"],
             runtime=tmdb_movie_dict["runtime"],
             status=tmdb_movie_dict["status"],
