@@ -19,8 +19,8 @@ class Review(db.Model):
                   "id": self.id,
                   "rating": self.rating,
                   "content": self.content,
-                  "created": self.date_created,
-                  "updated": self.date_updated,
+                  "created": self.date_created.isoformat(),
+                  "updated": self.date_updated.isoformat(),
                   "user": self.user.get_id_username_dict(),
                   "media": self.media.get_media_info_json(),
                   "fromTMDB": False
