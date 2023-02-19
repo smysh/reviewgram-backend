@@ -11,7 +11,7 @@ class Media(db.Model):
       def get_media_info_json(self):
             media_dict = {
                   "id": self.id,
-                  "is_movie": self.is_movie,
+                  "isMovie": self.is_movie,
                   "TMDB_id": self.TMDB_id,
                   "title": self.title,
             }
