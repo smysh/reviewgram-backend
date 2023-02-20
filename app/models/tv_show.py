@@ -59,7 +59,7 @@ class TVShow:
         show["name"] = self.name
         show["overview"] = self.overview
         show["rating"] = self.rating
-        show["poster_path"] = self.poster_url
+        show["poster_url"] = self.poster_url
         show["isMovie"] = False
 
         return show
