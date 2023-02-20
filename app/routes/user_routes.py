@@ -1,4 +1,5 @@
-from flask import Blueprint, request, jsonify, make_response
+import time
+from flask import Blueprint, request, jsonify, make_response, abort
 from app import db
 from app.routes.helpers import validate_request_body, validate_model
 from app.models.user import User
@@ -6,6 +7,8 @@ from app.models.review import Review
 from app.models.media import Media
 from app.models.watchlist import Watchlist
 from datetime import datetime
+from app.routes.TMDB_API_calls import get_TMDB_movie, get_TMDB_tv_show
+
 
 user_bp = Blueprint('user_bp', __name__, url_prefix="/users")
 
@@ -122,7 +125,26 @@ def get_user_watchlist(user_id):
                                             Watchlist.watched==False).all()
     watchlist = []
     for entry in watchlist_query:
-        watchlist.append(entry.to_json())
+        try:
+            if entry.media.is_movie:
+                json_entry = entry.to_json()
+                movie = get_TMDB_movie(entry.media.TMDB_id)
+                json_entry["media"] = movie.get_search_result_dict()
+                watchlist.append(json_entry)
+                time.sleep(0.25)
+            else:
+                json_entry = entry.to_json()
+                json_entry["media"] = get_TMDB_tv_show(entry.media.TMDB_id).get_search_result_dict()
+                watchlist.append(json_entry)
+                time.sleep(0.25)
+
+        except Exception as err:
+            print(f"An error occurred getting watchlist data from TMDB API")
+            print(err)
+
+            response_obj["statuscode"] = 500
+            response_obj["message"] = f"Problem accessing TMDB API"
+            abort(make_response(jsonify(response_obj),500))
 
     response_obj = {
         "statuscode": 200,
@@ -140,7 +162,25 @@ def get_user_watched(user_id):
 
     watched = []
     for entry in watchlist_query:
-        watched.append(entry.to_json())
+        try:
+            if entry.media.is_movie:
+                json_entry = entry.to_json()
+                json_entry["media"] = get_TMDB_movie(entry.media.TMDB_id).get_search_result_dict()
+                watched.append(json_entry)
+                time.sleep(0.25)
+            else:
+                json_entry = entry.to_json()
+                json_entry["media"] = get_TMDB_tv_show(entry.media.TMDB_id).get_search_result_dict()
+                watched.append(json_entry)
+                time.sleep(0.25)
+
+        except Exception as err:
+            print(f"An error occurred getting watched list data from TMDB API")
+            print(err)
+
+            response_obj["statuscode"] = 500
+            response_obj["message"] = f"Problem accessing TMDB API"
+            abort(make_response(jsonify(response_obj),500))
 
     response_obj = {
         "statuscode": 200,

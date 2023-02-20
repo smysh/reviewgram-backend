@@ -116,7 +116,7 @@ def get_movie_by_id(tmdb_movie_id):
 
     response_obj["statuscode"] = 200
     response_obj["message"]= f"Movie with id: {tmdb_movie_id} retrieved from TMDB"
-    response_obj["movie"] = movie
+    response_obj["movie"] = movie.to_dict()
 
     return make_response(jsonify(response_obj),200)
 
