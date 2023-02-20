@@ -49,6 +49,7 @@ class TVShow:
         tv_show_dict["providers"] = self.providers
         tv_show_dict["episode_runtime"] = self.episode_runtime
         tv_show_dict["genres"] = self.genres
+        tv_show_dict["isMovie"] = False
 
         return tv_show_dict
 

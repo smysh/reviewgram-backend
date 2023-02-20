@@ -15,11 +15,11 @@ class Review(db.Model):
       media = db.relationship("Media", back_populates="reviews")
 
       def to_json(self):
-            review = {
+            review = {   #YYYY-MM-DDTHH:MM:SS
                   "id": self.id,
                   "rating": self.rating,
                   "content": self.content,
-                  "created": self.date_created.isoformat(),
+                  "created": self.date_created.isoformat(),  #strftime("%Y-%m-%dT%H:%M:%S"),
                   "updated": self.date_updated.isoformat(),
                   "user": self.user.get_id_username_dict(),
                   "media": self.media.get_media_info_json(),

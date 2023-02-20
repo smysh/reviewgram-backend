@@ -90,6 +90,8 @@ def add_media_review(user_id):
         review = Review.from_json(request_body)
         review.media = media
         review.user = user
+        review.date_created = datetime.now()
+        review.date_updated = review.date_created
         db.session.add(review)
         db.session.commit()
     else:
@@ -97,6 +99,8 @@ def add_media_review(user_id):
         review.rating = request_body["rating"]
         review.updated = datetime.now()
         db.session.commit()
+
+        
 
     response_obj = {
         "statuscode": 201,
