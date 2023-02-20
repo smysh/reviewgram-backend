@@ -1,5 +1,5 @@
 class Movie():
-    def __init__(self, TMDB_id, title, overview, poster_url, rating, release_date="", original_language="", runtime=0, status="", genres=[], isMovie=True ):
+    def __init__(self, TMDB_id, title, overview, poster_url, rating, vote_count, release_date="", original_language="", runtime=0, status="", genres=[], isMovie=True ):
         # movie_id
         self.TMDB_id = TMDB_id
         # movie's title
@@ -12,6 +12,7 @@ class Movie():
         self.release_date = release_date
         # vote_average from TMDB rating
         self.rating = rating
+        self.vote_count = vote_count
         # list of genres
         self.genres = genres
         # language code for movie language 'en' for english
@@ -22,6 +23,7 @@ class Movie():
         self.status = status
         # is it a movie or tv show
         self.isMovie = isMovie
+
 
     def to_dict(self):
         """
@@ -34,6 +36,7 @@ class Movie():
                 "poster_url": self.poster_url,
                 "release_date": self.release_date,
                 "rating": self.rating,
+                "vote_count": self.vote_count,
                 "genres":self.genres,
                 "original_language":self.original_language,
                 "runtime":self.runtime,
@@ -49,7 +52,10 @@ class Movie():
             title=tmdb_movie_dict["title"],
             overview=tmdb_movie_dict["overview"],
             poster_url=tmdb_movie_dict["poster_path"],
-            rating=tmdb_movie_dict["vote_average"]
+            original_language=tmdb_movie_dict["original_language"],
+            release_date=tmdb_movie_dict["release_date"],
+            rating=tmdb_movie_dict["vote_average"],
+            vote_count=tmdb_movie_dict["vote_count"]
         )
 
     @classmethod
@@ -71,6 +77,7 @@ class Movie():
             poster_url=tmdb_movie_dict["poster_path"],
             release_date=tmdb_movie_dict["release_date"],
             rating=tmdb_movie_dict["vote_average"],
+            vote_count=tmdb_movie_dict["vote_count"],
             genres=genres_list,
             original_language=tmdb_movie_dict["original_language"],
             runtime=tmdb_movie_dict["runtime"],

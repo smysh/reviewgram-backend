@@ -5,6 +5,7 @@ class TVShow:
                     overview: str,
                     rating: float, 
                     poster_url: str, 
+                    vote_count: int,
                     original_language="",
                     origin_country="",
                     first_air_date="",
@@ -31,6 +32,7 @@ class TVShow:
         self.providers = providers
         self.episode_runtime = episode_runtime
         self.genres = genres
+        self.vote_count = vote_count
 
     def to_json(self):
         tv_show_dict = {}
@@ -38,6 +40,7 @@ class TVShow:
         tv_show_dict["name"] = self.name
         tv_show_dict["overview"] = self.overview
         tv_show_dict["rating"] = self.rating
+        tv_show_dict["vote_count"] = self.vote_count
         tv_show_dict["poster_url"] = self.poster_url
         tv_show_dict["original_language"] = self.original_language
         tv_show_dict["origin_country"] = self.origin_country
@@ -58,6 +61,9 @@ class TVShow:
         show["TMDB_id"] = self.TMDB_id
         show["name"] = self.name
         show["overview"] = self.overview
+        show["origin_country"] = self.origin_country
+        show["original_language"] = self.original_language
+        show["first_air_date"] = self.first_air_date
         show["rating"] = self.rating
         show["poster_url"] = self.poster_url
         show["isMovie"] = False
@@ -83,6 +89,7 @@ class TVShow:
                     first_air_date=tmdb_data["first_air_date"],
                     last_air_date=tmdb_data["last_air_date"],
                     episode_runtime=tmdb_data["episode_run_time"],
+                    vote_count=tmdb_data["vote_count"],
                     genres=genres_list)
 
         return tv_show
@@ -92,7 +99,11 @@ class TVShow:
         tv_show = TVShow(TMDB_id=tmdb_tv_search_result["id"],
                     name=tmdb_tv_search_result["name"],
                     overview=tmdb_tv_search_result["overview"],
+                    origin_country=tmdb_tv_search_result["origin_country"],
+                    original_language=tmdb_tv_search_result["original_language"],
+                    first_air_date=tmdb_tv_search_result["first_air_date"],
                     rating=tmdb_tv_search_result["vote_average"],
+                    vote_count=tmdb_tv_search_result["vote_count"],
                     poster_url=tmdb_tv_search_result["poster_path"])
 
         return tv_show
