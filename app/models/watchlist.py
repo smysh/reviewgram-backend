@@ -14,8 +14,8 @@ class Watchlist(db.Model):
             entry = {
                   "id": self.id,
                   "watched": self.watched,
-                  "user": self.user.get_id_username_dict(),
-                  "media": self.media.get_media_info_json()
+                  "user": self.user.get_id_username_dict()
+                  #"media": self.media.get_search_result_dict()
             }
             return entry
 

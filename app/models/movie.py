@@ -24,6 +24,19 @@ class Movie():
         # is it a movie or tv show
         self.isMovie = isMovie
 
+    def get_search_result_dict(self):
+        movie_dict = {
+                "TMDB_id": self.TMDB_id,
+                "title": self.title,
+                "overview": self.overview,
+                "poster_url": self.poster_url,
+                "release_date": self.release_date,
+                "rating": self.rating,
+                "vote_count": self.vote_count,
+                "original_language":self.original_language,
+                "isMovie":self.isMovie,
+        }
+        return movie_dict
 
     def to_dict(self):
         """
