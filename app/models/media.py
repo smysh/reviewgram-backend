@@ -19,7 +19,7 @@ class Media(db.Model):
 
       def get_media_reviews_json(self):
             if not self.reviews:
-                  return None
+                  return []
 
             json_reviews = []
             for review in self.reviews:
