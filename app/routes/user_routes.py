@@ -12,9 +12,6 @@ from app.routes.TMDB_API_calls import get_TMDB_movie, get_TMDB_tv_show
 
 user_bp = Blueprint('user_bp', __name__, url_prefix="/users")
 
-@user_bp.route("/validate",methods = ["GET"])
-def validate_user():
-    pass
 
 #------------------CRUD routes for user--------------------
 @user_bp.route("",methods = ["POST"])
