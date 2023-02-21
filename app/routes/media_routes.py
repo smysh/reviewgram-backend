@@ -164,6 +164,9 @@ def get_reviews_by_tv_id(tmdb_tv_id):
         reviews = tmdb_reviews
         media = Media(TMDB_id=tmdb_tv_id,is_movie=False)
     else:
+        our_reviews = media.reviews
+        if our_reviews:
+            our_reviews.sort(reverse=True, key=lambda review: review.date_updated)
         reviews.extend(media.get_media_reviews_json())
         reviews.extend(tmdb_reviews)
 
@@ -196,6 +199,9 @@ def get_reviews_by_movie_id(tmdb_movie_id):
         reviews = tmdb_reviews
         media = Media(TMDB_id=tmdb_movie_id,is_movie=True)
     else:
+        our_reviews = media.reviews
+        if our_reviews:
+            our_reviews.sort(reverse=True, key=lambda review: review.date_updated)
         reviews.extend(media.get_media_reviews_json())
         reviews.extend(tmdb_reviews)
 
