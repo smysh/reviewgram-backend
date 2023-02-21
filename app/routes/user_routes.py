@@ -23,7 +23,7 @@ def create_user():
     
     db.session.add(new_user)
     db.session.commit()
-
+    
     response_obj = {
         "statuscode": 201,
         "message": f"User: {new_user.user_name} created successfully.",
