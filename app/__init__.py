@@ -3,7 +3,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from dotenv import load_dotenv
 import os
-#from flask_cors import CORS
+from flask_cors import CORS
 from flask_jwt_extended import JWTManager
 
 db = SQLAlchemy()
@@ -45,5 +45,5 @@ def create_app(test_config=None):
 
     jwt = JWTManager(app)
 
-    #CORS(app)
+    CORS(app)
     return app
