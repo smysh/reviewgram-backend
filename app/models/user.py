@@ -15,6 +15,7 @@ class User(db.Model):
             user_dict["name"] = self.name
             user_dict["email"] = self.email
             user_dict["username"] = self.user_name
+            user_dict["password"] = self.password
 
             return user_dict
 
