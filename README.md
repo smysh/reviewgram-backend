@@ -1,49 +1,32 @@
-# reviewgram-backend
-Repo for backend of reviewgram - a full stack webpage for finding reviews and ratings of TV shows and movies
+# ReviewGram - backend
+Repo for backend of reviewgram - a full stack webAPI for finding reviews and ratings of TV shows and movies, and keep your own watchlists
 
-This scaffold includes the following:
+ 
+## Feature Set
 
-## `app/__init__.py`
+We connected our back-end to TMDB API which gave us all the tvshows and movie information. For the front-end to work we created the following endpoints:
 
-This file configures the app. It's where:
+ - User Routes
+	 - CRUD routes for user
+	 - Get reviews from user
+	 - Add review to Media
+	 - Add to user watchlist
+	 - Add to user watched list
+	 - Get user watchlist
+	 - Get user watched list
+	 
+ - Media Routes
+	 - Get Img url (TMDB api requires to look up for the images in different serves regularly)
+	 - Search media
+	 - Get trending tv shows
+	 - Get trending movies
+	 - Get movie details
+	 - Get show details
+	 - Get reviews for tv show
+	 - Get reviews for movie
+	 - 
+ - Authorization Routes
+	 - Get authorization Token
 
-We expect developers to modify this file by:
-
-- Replacing the database connection string
-- Importing all models
-- Registering all blueprints
-
-Note that `create_app` also uses CORS. There is no extra action needed to be done with CORS.
-
-## `app/routes.py`
-
-We expect endpoints to be defined here.
-
-The file already imports:
-
-- `Blueprint`
-- `request`
-- `jsonify`
-- `make_response`
-- `db`
-
-Feel free to alter these import statements.
-
-This file also has a comment to define a Blueprint. Feel free to delete it.
-
-## `app/models` Directory
-
-This project already includes `app/models/user.py`, to anticipate the model `User`.
-
-The model file already import `db`, for convenience!
-
-## `requirements.txt`
-
-This file lists the dependencies we anticipate are needed for the project.
-
-## `Procfile`
-
-This file already has the contents needed for a Heroku deployment.
-
-If the `create_app` function in `app/__init__.py` is renamed or moved, the contents of this file need to change. Otherwise, we don't anticipate this file to change.
-
+## Technology used
+This back-end has been entirely programmed in ***Python***, using ***flask*** and ***SQLAlchemy***. The database used is ***Postgres***.
