@@ -46,7 +46,22 @@ def get_user_by_id(user_id):
 
 @user_bp.route("/<user_id>",methods = ["PATCH"])
 def update_user(user_id):
-    pass
+    request_body = request.get_json(silent=True)
+    user = validate_model(User,user_id)
+    validate_request_body(request_body,["name","email","password"])
+
+    user.name = request_body["name"]
+    user.email = request_body["email"]
+    user.password = request_body["password"]
+
+    db.session.commit()
+    response_obj = {
+        "statuscode": 200,
+        "message": f"Updated user {user.user_name}.",
+        "user": user.get_user_data_json()
+    }
+
+    return make_response(jsonify(response_obj), 200)
 
 @user_bp.route("/<user_id>",methods = ["DELETE"])
 def delete_user(user_id):
