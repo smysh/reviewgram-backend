@@ -19,6 +19,7 @@ def create_app(test_config=None):
     print(uri)
     if uri.startswith("postgres://"):
         uri = uri.replace("postgres://", "postgresql://",1)
+        print(uri)
     if test_config is None:
         app.config["SQLALCHEMY_DATABASE_URI"] = uri
     else:
