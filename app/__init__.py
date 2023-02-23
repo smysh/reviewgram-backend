@@ -15,9 +15,11 @@ def create_app(test_config=None):
     app = Flask(__name__)
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
     app.config["JWT_SECRET_KEY"] = os.environ.get("JWT_SECRET_KEY")
+    uri = os.environ.get("SQLALCHEMY_DATABASE_URI")
+    if uri.startswith("postgres://"):
+        uri = uri.replace("postgres://", "postgresql://",1)
     if test_config is None:
-        app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get(
-        "SQLALCHEMY_DATABASE_URI")
+        app.config["SQLALCHEMY_DATABASE_URI"] = uri
     else:
         app.config["TESTING"] = True
         app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get(
